@@ -39,54 +39,34 @@
     <link href="css/vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" rel="stylesheet">
     <link href="css/vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">
 
+    <script src="css/vendors/jquery/dist/jquery.min.js"></script>
     
     <script type="text/javascript">
-
-      function search(){
-	    	var qword =$("#qword").val();
-	    	var tbody=window.document.getElementById("customer-details");
-	
-	    	alert(qword);
-	    	$.ajax({
-	    	        type: "post",
-	    	        dataType: "json",
-	    	        url: "searchCustomer",
-	    	        contentType: 'application/json; charset=utf-8',
-	    	        data: {
-	    	          qword:"SZNOTEC"
-	    	        },
-	    	        success: function (data) {
-	    	          alert(data);
-	    	          if (data.ret) {
-	    	            var str = "";
-	    	            var data = data.data;
-	
-	    	            for (i in data) {
-	    	              str += "<tr>" +
-	    	              "<td>" + data[i].compSno + "</td>" +
-	    	              "<td>" + data[i].compName + "</td>" +
-	    	              "<td>" + data[i].shrtName + "</td>" +
-	    	              "<td>" + data[i].compTel + "</td>" +
-	    	              "<td>" + data[i].compAddr + "</td>" +
-	    	              "<td>" + data[i].cnntName + "</td>" +
-	    	              "<td>" + data[i].cnntPhone + "</td>" +
-	    	              "<td>" + data[i].position + "</td>" +
-	    	              "<td>" + data[i].specialist + "</td>" +
-	    	              "<td>" + data[i].cmt + "</td>" +
-	    	              "</tr>";
-	    	            }
-	    	            tbody.innerHTML = str;
-	    	            alert(str);
-	    	          }
-	    	        },
-	    	        error: function () {
-	    	          tbody.innerHTML = "<tr> <td> 无相关数据 </td> </tr>";
-	    	          alert("查询失败")
-	    	        }
-	    	  });
-	    	tbody.innerHTML = "<tr> <td> 无相关数据 </td> </tr>";
-	    	alert("Here");
-      }
+    $(document).ready(function() {
+        alert("AAA");
+        $('#datatable-fixed-header').dataTable( {
+            ajax: {
+                "url":"getJson",
+/*                      "dataSrc":"data", */
+                "dataSrc": function(json) {
+                        alert(JSON.stringify(json));
+                        return json.data;
+                    }
+                },
+            columns: [
+                { "title":"序号", "data": "compSno"},
+                { "title":"客户编码", "data": "shrtName"},
+                { "title":"名称", "data": "compName"},
+                { "title":"电话", "data": "compTel"},
+                { "title":"地址", "data": "compAddr"},
+                { "title":"联系人", "data": "cnntName"},
+                { "title":"联系电话", "data": "cnntPhone"},
+                { "title":"职位", "data": "position"},
+                { "title":"客户专员", "data": "specialist"},
+                { "title":"备注", "data": "cmt"}
+            ]
+        } );
+    });
     </script>
     
   </head>
@@ -350,7 +330,7 @@
 		                  </div>
 		                  <div class="x_content">
 		                    <table id="datatable-fixed-header" class="table table-striped table-bordered dt-responsive nowrap">
-		                      <thead>
+<!-- 		                      <thead>
 		                        <tr>
 		                          <th>编号</th>
 		                          <th>名称</th>
@@ -366,7 +346,7 @@
 		                      </thead>
 		
 		                      <tbody id="customer-details">
-		                      </tbody>
+		                      </tbody> -->
 		                    </table>
 		                  </div>
 		                  <div class="clearfix"></div>
