@@ -8,7 +8,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title> 信息管理系统 ! </title>
+    <title> SZNOTEC 信息管理系统 ! </title>
 
     <!-- Bootstrap -->
     <link href="css/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -43,57 +43,56 @@
     <script type="text/javascript">
 
       function search(){
-    	var qword =$("#qword").val();
-    	var tbody=window.document.getElementById("customer-details");
-
-    	alert(qword);
-    	$.ajax({
-    	        type: "post",
-    	        dataType: "json",
-    	        url: "searchCustomer",
-    	        contentType: 'application/json; charset=utf-8',
-    	        data: {
-    	          qword:"SZNOTEC"
-    	        },
-    	        success: function (data) {
-    	          alert(data);
-    	          if (data.ret) {
-    	            var str = "";
-    	            var data = data.data;
-
-    	            for (i in data) {
-    	              str += "<tr>" +
-    	              "<td>" + data[i].compSno + "</td>" +
-    	              "<td>" + data[i].compName + "</td>" +
-    	              "<td>" + data[i].shrtName + "</td>" +
-    	              "<td>" + data[i].compTel + "</td>" +
-    	              "<td>" + data[i].compAddr + "</td>" +
-    	              "<td>" + data[i].homePage + "</td>" +
-    	              "<td>" + data[i].cnntName + "</td>" +
-    	              "<td>" + data[i].cnntPhone + "</td>" +
-    	              "<td>" + data[i].position + "</td>" +
-    	              "<td>" + data[i].specialist + "</td>" +
-    	              "<td>" + data[i].cmtSno + "</td>" +
-    	              "</tr>";
-    	            }
-    	            tbody.innerHTML = str;
-    	            alert(str);
-    	          }
-    	        },
-    	        error: function () {
-    	          tbody.innerHTML = "<tr> <td> 无相关数据 </td> </tr>";
-    	          alert("查询失败")
-    	        }
-    	  });
-    	tbody.innerHTML = "<tr> <td> 无相关数据 </td> </tr>";
-    	alert("Here");
+	    	var qword =$("#qword").val();
+	    	var tbody=window.document.getElementById("customer-details");
+	
+	    	alert(qword);
+	    	$.ajax({
+	    	        type: "post",
+	    	        dataType: "json",
+	    	        url: "searchCustomer",
+	    	        contentType: 'application/json; charset=utf-8',
+	    	        data: {
+	    	          qword:"SZNOTEC"
+	    	        },
+	    	        success: function (data) {
+	    	          alert(data);
+	    	          if (data.ret) {
+	    	            var str = "";
+	    	            var data = data.data;
+	
+	    	            for (i in data) {
+	    	              str += "<tr>" +
+	    	              "<td>" + data[i].compSno + "</td>" +
+	    	              "<td>" + data[i].compName + "</td>" +
+	    	              "<td>" + data[i].shrtName + "</td>" +
+	    	              "<td>" + data[i].compTel + "</td>" +
+	    	              "<td>" + data[i].compAddr + "</td>" +
+	    	              "<td>" + data[i].cnntName + "</td>" +
+	    	              "<td>" + data[i].cnntPhone + "</td>" +
+	    	              "<td>" + data[i].position + "</td>" +
+	    	              "<td>" + data[i].specialist + "</td>" +
+	    	              "<td>" + data[i].cmt + "</td>" +
+	    	              "</tr>";
+	    	            }
+	    	            tbody.innerHTML = str;
+	    	            alert(str);
+	    	          }
+	    	        },
+	    	        error: function () {
+	    	          tbody.innerHTML = "<tr> <td> 无相关数据 </td> </tr>";
+	    	          alert("查询失败")
+	    	        }
+	    	  });
+	    	tbody.innerHTML = "<tr> <td> 无相关数据 </td> </tr>";
+	    	alert("Here");
       }
     </script>
     
   </head>
   
-  <body class="nav-md footer_fixed">
-    <div class="container body  nav-menu-fixed">
+  <body class="nav-md">
+    <div class="container body">
       <div class="main_container">
         <div class="col-md-3 left_col menu_fixed">
           <div class="left_col scroll-view">
@@ -124,16 +123,15 @@
                 <ul class="nav side-menu">
                   <li class=""><a><i class="fa fa-user"></i> 个人 <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu" style="display: none;">
-                      <li><a href="workboard.html">通知公告</a></li>
-                      <li><a href="myorder.html">备忘录</a></li>
-                      <li><a href="myinfo.html">联络人</a></li>
+                      <li><a href="notifications.jsp">通知公告</a></li>
+                      <li><a href="myinfo.html">通讯录</a></li>
                       <li><a href="myinfo.html">个人信息</a></li>
                     </ul>
                   </li>
                   <li class=""><a><i class="fa fa-edit"></i> 销售 <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu" style="display: none;">
 <!--                       <li><a href="customer.jsp">客户管理</a></li> -->
-                      <li><a href="#" onclick="loadPage('customer.jsp')">客户管理</a></li>
+                      <li><a href="customers.jsp">客户管理</a></li>
                       <li><a href="form_advanced.html">销售订单</a></li>
                       <li><a href="form_validation.html">销售报表</a></li>
                       <li><a href="form_validation.html">销售审计</a></li>
@@ -300,29 +298,11 @@
         <!-- /top navigation -->
 
         <!-- page content -->
-<%--         <div class="right_col" role="main" style="min-height: 712px;">
-<!--           <iframe scrolling="auto" frameborder="0" src="success.jsp" style="width:1000px;height:800px;"></iframe> -->
-          <div id="pageShow">
-          <%@ include file="success.jsp" %>
-          </div>
-        </div> --%>
-        
         <div class="right_col" role="main" style="min-height: 712px;">
           <div class="">
             <div class="page-title">
               <div class="title_left">
                 <h3> 客户资料 </h3>
-              </div>
-
-              <div class="title_right">
-                <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
-                  <div class="input-group">
-                    <input id="qword" type="text" class="form-control" placeholder="关键字">
-                    <span class="input-group-btn">
-                        <button class="btn btn-default" type="button" onclick="search()">查询</button>
-                    </span>
-                  </div>
-                </div>
               </div>
             </div>
 
@@ -331,37 +311,238 @@
             <div class="row">
               <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
-                  <div class="x_title">
-                    <h2>详细列表</h2>
-                    <div class="clearfix"></div>
+                  <div class="col-xs-2">
+                    <!-- required for floating -->
+                    <!-- Nav tabs -->
+                      <ul class="nav nav-tabs tabs-left">
+                        <li class="active"><a href="#query" data-toggle="tab" aria-expanded="true">查询</a>
+                        </li>
+                        <li class=""><a href="#add" data-toggle="tab" aria-expanded="false">新增</a>
+                        </li>
+                        <li class=""><a href="#edit" data-toggle="tab" aria-expanded="false">编辑</a>
+                        </li>
+                      </ul>
                   </div>
-                  <div class="x_content">
-                    <table id="datatable-fixed-header" class="table table-striped table-bordered dt-responsive nowrap">
-                      <thead>
-                        <tr>
-                          <th>编号</th>
-                          <th>名称</th>
-                          <th>编码</th>
-                          <th>电话</th>
-                          <th>地址</th>
-                          <th>主页</th>
-                          <th>联络人</th>
-                          <th>职务</th>
-                          <th>联系电话</th>
-                          <th>客户专员</th>
-                          <th>备注</th>
-                        </tr>
-                      </thead>
-
-                      <tbody id="customer-details">
-                      </tbody>
-                    </table>
-                  </div>
+                  <div class="col-xs-10">
+                      <!-- Tab panes -->
+                      <div class="tab-content">
+                        <div class="tab-pane active" id="query">
+		                  <div class="x_title">
+		                    <h2>客户列表</h2>
+		                    <div class="title_right">
+		                      <div class="col-md-5 col-sm-5 col-xs-9 form-group pull-right top_search">
+		                          <div class="input-group col-md-4 col-sm-4 col-xs-4 pull-left">
+				                    <select id="qtype" class="form-control">
+		                                <option value="compName">公司名</option>
+		                                <option value="shrtName">客户编号</option>
+		                                <option value="specialist">客户专员</option>
+		                             </select>
+		                          </div>
+				                  <div class="input-group col-md-8 col-sm-8 col-xs-8 pull-right">
+				                    <input id="qword" type="text" class="form-control" placeholder="关键字">
+				                    <span class="input-group-btn">
+				                        <button class="btn btn-default " type="button" onclick="search()"> 🔍 </button>
+				                    </span>
+				                  </div>
+				                </div>
+				              </div>
+		                    <div class="clearfix"></div>
+		                  </div>
+		                  <div class="x_content">
+		                    <table id="datatable-fixed-header" class="table table-striped table-bordered dt-responsive nowrap">
+		                      <thead>
+		                        <tr>
+		                          <th>编号</th>
+		                          <th>名称</th>
+		                          <th>编码</th>
+		                          <th>电话</th>
+		                          <th>地址</th>
+		                          <th>联络人</th>
+		                          <th>职务</th>
+		                          <th>联系电话</th>
+		                          <th>客户专员</th>
+		                          <th>备注</th>
+		                        </tr>
+		                      </thead>
+		
+		                      <tbody id="customer-details">
+		                      </tbody>
+		                    </table>
+		                  </div>
+		                  <div class="clearfix"></div>
+                        </div>
+                        <div class="tab-pane" id="add">
+		                  <div class="x_title">
+		                    <h2> 新增客户</h2>
+		                    <div class="clearfix"></div>
+		                  </div>
+		                  <div class="x_content">
+		                    <form name="addForm" id="addForm" class="form-horizontal form-label-left" action="addCustomer" method="POST">
+		
+		                      <span class="section"> 客户资料 </span>
+		
+		                      <div class="item form-group">
+		                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="compName">客户名称 <span class="required">*</span>
+		                        </label>
+		                        <div class="col-md-6 col-sm-6 col-xs-12">
+		                          <input id="compName"  name="compName" type="text" class="form-control col-md-7 col-xs-12" required="required" data-validate-length-range="6" data-validate-words="2">
+		                        </div>
+		                      </div>
+		                      <div class="item form-group">
+		                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="shrtName">客户编码 <span class="required">*</span>
+		                        </label>
+		                        <div class="col-md-6 col-sm-6 col-xs-12">
+		                          <input id="shrtName" name="shrtName" type="text" class="form-control col-md-7 col-xs-12" required="required"  data-validate-length-range="6" data-validate-words="2">
+		                        </div>
+		                      </div>
+		                      <div class="item form-group">
+		                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="compTel">电话 <span class="required">*</span>
+		                        </label>
+		                        <div class="col-md-6 col-sm-6 col-xs-12">
+		                          <input type="tel" id="compTel" name="compTel" class="form-control col-md-7 col-xs-12" required="required" data-validate-length-range="8,20">
+		                        </div>
+		                      </div>
+		                      <div class="item form-group">
+		                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="compAddr">地址 <span class="required">*</span>
+		                        </label>
+		                        <div class="col-md-6 col-sm-6 col-xs-12">
+		                          <input type="text" id="compAddr" name="compAddr" class="form-control col-md-7 col-xs-12" required="required" data-validate-length-range="4,100">
+		                        </div>
+		                      </div>
+		                      <div class="item form-group">
+		                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="cnntName">联系人 <span class="required">*</span>
+		                        </label>
+		                        <div class="col-md-6 col-sm-6 col-xs-12">
+		                          <input type="text" id="cnntName" name="cnntName" class="form-control col-md-7 col-xs-12" required="required" data-validate-minmax="4,10">
+		                        </div>
+		                      </div>
+		                      <div class="item form-group">
+		                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="cnntPhone">联系电话 <span class="required">*</span>
+		                        </label>
+		                        <div class="col-md-6 col-sm-6 col-xs-12">
+		                          <input type="tel" id="cnntPhone" name="cnntPhone" class="form-control col-md-7 col-xs-12" required="required" data-validate-length-range="8,20">
+		                        </div>
+		                      </div>
+		                      <div class="item form-group">
+		                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="position">职位 <span class="required">*</span>
+		                        </label>
+		                        <div class="col-md-6 col-sm-6 col-xs-12">
+		                          <input id="position" type="text" name="position" class="form-control col-md-7 col-xs-12" required="required">
+		                        </div>
+		                      </div>
+		                      <div class="item form-group">
+		                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="specialist">客户专员 <span class="required">*</span>
+		                        </label>
+		                        <div class="col-md-6 col-sm-6 col-xs-12">
+		                          <input id="specialist" type="text" name="specialist" class="form-control col-md-7 col-xs-12" required="required" data-validate-length-range="4,20">
+		                        </div>
+		                      </div>
+		                      <div class="item form-group">
+		                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="cmt">备注</label>
+		                        <div class="col-md-6 col-sm-6 col-xs-12">
+		                          <textarea id="cmt" name="cmt" class="form-control col-md-7 col-xs-12"></textarea>
+		                        </div>
+		                      </div>
+		                      <div class="ln_solid"></div>
+		                      <div class="form-group">
+		                        <div class="col-md-12 col-md-offset-5">
+		                          <button id="submit" type="submit" class="btn btn-success">提交</button>
+		                          <button id="cancel" type="reset" class="btn btn-primary">取消</button>
+		                        </div>
+		                      </div>
+		                    </form>
+		                  </div>
+		                  <div class="clearfix"></div>
+		                </div>
+                        <div class="tab-pane" id="edit">
+		                  <div class="x_title">
+		                    <h2> 编辑客户</h2>
+		                    <div class="clearfix"></div>
+		                  </div>
+		                  <div class="x_content">
+		                    <form name="editForm" id="editForm" class="form-horizontal form-label-left" action="updateCustomer" method="POST">
+		
+		                      <span class="section"> 客户资料 </span>
+		
+		                      <div class="item form-group">
+		                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="compName">客户名称 <span class="required">*</span>
+		                        </label>
+		                        <div class="col-md-6 col-sm-6 col-xs-12">
+		                          <input id="compName"  name="compName" type="text" class="form-control col-md-7 col-xs-12" required="required" data-validate-length-range="6" data-validate-words="2">
+		                        </div>
+		                      </div>
+		                      <div class="item form-group">
+		                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="shrtName">客户编码 <span class="required">*</span>
+		                        </label>
+		                        <div class="col-md-6 col-sm-6 col-xs-12">
+		                          <input id="shrtName" name="shrtName" type="text" class="form-control col-md-7 col-xs-12" required="required"  data-validate-length-range="6" data-validate-words="2">
+		                        </div>
+		                      </div>
+		                      <div class="item form-group">
+		                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="compTel">电话 <span class="required">*</span>
+		                        </label>
+		                        <div class="col-md-6 col-sm-6 col-xs-12">
+		                          <input type="tel" id="compTel" name="compTel" class="form-control col-md-7 col-xs-12" required="required" data-validate-length-range="8,20">
+		                        </div>
+		                      </div>
+		                      <div class="item form-group">
+		                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="compAddr">地址 <span class="required">*</span>
+		                        </label>
+		                        <div class="col-md-6 col-sm-6 col-xs-12">
+		                          <input type="text" id="compAddr" name="compAddr" class="form-control col-md-7 col-xs-12" required="required" data-validate-length-range="4,100">
+		                        </div>
+		                      </div>
+		                      <div class="item form-group">
+		                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="cnntName">联系人 <span class="required">*</span>
+		                        </label>
+		                        <div class="col-md-6 col-sm-6 col-xs-12">
+		                          <input type="text" id="cnntName" name="cnntName" class="form-control col-md-7 col-xs-12" required="required" data-validate-minmax="4,10">
+		                        </div>
+		                      </div>
+		                      <div class="item form-group">
+		                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="cnntPhone">联系电话 <span class="required">*</span>
+		                        </label>
+		                        <div class="col-md-6 col-sm-6 col-xs-12">
+		                          <input type="tel" id="cnntPhone" name="cnntPhone" class="form-control col-md-7 col-xs-12" required="required" data-validate-length-range="8,20">
+		                        </div>
+		                      </div>
+		                      <div class="item form-group">
+		                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="position">职位 <span class="required">*</span>
+		                        </label>
+		                        <div class="col-md-6 col-sm-6 col-xs-12">
+		                          <input id="position" type="text" name="position" class="form-control col-md-7 col-xs-12" required="required">
+		                        </div>
+		                      </div>
+		                      <div class="item form-group">
+		                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="specialist">客户专员 <span class="required">*</span>
+		                        </label>
+		                        <div class="col-md-6 col-sm-6 col-xs-12">
+		                          <input id="specialist" type="text" name="specialist" class="form-control col-md-7 col-xs-12" required="required" data-validate-length-range="4,20">
+		                        </div>
+		                      </div>
+		                      <div class="item form-group">
+		                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="cmt">备注</label>
+		                        <div class="col-md-6 col-sm-6 col-xs-12">
+		                          <textarea id="cmt" name="cmt" class="form-control col-md-7 col-xs-12"></textarea>
+		                        </div>
+		                      </div>
+		                      <div class="ln_solid"></div>
+		                      <div class="form-group">
+		                        <div class="col-md-12 col-md-offset-5">
+		                          <button id="submit" type="submit" class="btn btn-success">提交</button>
+		                          <button id="cancel" type="reset" class="btn btn-primary">取消</button>
+		                        </div>
+		                      </div>
+		                    </form>
+		                  </div>
+		                  <div class="clearfix"></div>
+		                </div>
+                      </div>
+                    </div>
                 </div>
               </div>
-
             </div>
-          </div>
+           </div>
         </div>
         <!-- /page content -->
 

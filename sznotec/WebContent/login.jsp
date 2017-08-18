@@ -65,24 +65,59 @@
 
         <div id="register" class="animate form registration_form">
           <section class="login_content">
-            <form name="registerForm" action = "signup" method = "POST">
+            <form name="registerForm" class="form-horizontal form-label-left" action = "signup" method = "POST">
               <h1> 注 册 账 号 </h1>
-              <div>
+              <div class="item form-group">
+                  <label for="uid" class="control-label col-md-3">用户名</label>
+                  <div class="col-md-8 col-sm-8 col-xs-12">
+                      <input id="uid" type="text" name="uid" data-validate-length="4,10" class="form-control col-md-7 col-xs-12" required="required">
+                  </div>
+              </div>
+<!--               <div>
                 <input name="uid" type="text" class="form-control" placeholder="用户名" required="required" />
+              </div> -->
+              <div class="item form-group">
+                  <label for="upwd" class="control-label col-md-3">用户密码</label>
+                  <div class="col-md-8 col-sm-8 col-xs-12">
+                      <input id="upwd" type="password" name="upwd" data-validate-length="6,8" class="form-control col-md-7 col-xs-12" required="required">
+                  </div>
+              </div>
+              <div class="item form-group">
+                  <label for="upwd2" class="control-label col-md-3 col-sm-3 col-xs-12">确认密码</label>
+                  <div class="col-md-8 col-sm-8 col-xs-12">
+                      <input id="upwd2" type="password" name="upwd2" data-validate-linked="upwd" class="form-control col-md-7 col-xs-12" required="required">
+                  </div>
+              </div>
+<!--               <div>
+                <input name="upwd" type="password" class="form-control" placeholder="密 码" required="required" data-validate-length-range="6,20"/>
               </div>
               <div>
-                <input name="upwd" type="password" class="form-control" placeholder="密 码" required="required" />
+                <input name="empSno" type="text" class="form-control" placeholder="4位数字编号" required="required" data-validate-length-range="4"/>
+              </div> -->
+              <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="empSno">员工编号</label>
+                  <div class="col-md-8 col-sm-8 col-xs-12">
+                      <input type="text" id="empSno" name="empSno" placeholder="4位数字编号" required="required" data-validate-minmax="4,4" class="form-control col-md-7 col-xs-12">
+                  </div>
               </div>
-              <div>
-                <input name="empSno" type="text" class="form-control" placeholder="员工编号" required="required" />
+              <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="email">用户邮箱</label>
+                  <div class="col-md-8 col-sm-8 col-xs-12">
+                      <input type="email" id="email" name="email" required="required" class="form-control col-md-7 col-xs-12">
+                  </div>
               </div>
-              <div>
-                <input name="email" type="email" class="form-control" placeholder="邮 箱" required="required" />
+              <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="email">确认邮箱</label>
+                  <div class="col-md-8 col-sm-8 col-xs-12">
+                      <input type="email" id="email2" name="confirm_email" data-validate-linked="email" required="required" class="form-control col-md-7 col-xs-12">
+                  </div>
               </div>
-              <div>
-                <input type="submit" class="btn btn-default submit" value="提 交"/>
-<!--                 <a class="btn btn-default submit" href="index.html">注 册</a> -->
-              </div>
+              <div class="item form-group">
+	              <div class="col-md-12 col-sm-12 col-xs-12 col-md-offset-5"">
+	                <input type="submit" class="btn btn-default submit" value="提 交"/>
+	<!--                 <a class="btn btn-default submit" href="index.html">注 册</a> -->
+	              </div>
+	          </div>
 
               <div class="clearfix"></div>
 
@@ -105,4 +140,17 @@
       </div>
     </div>
   </body>
+  
+  <script src="../vendors/jquery/dist/jquery.min.js"></script>
+  <!-- Bootstrap -->
+  <script src="../vendors/bootstrap/dist/js/bootstrap.min.js"></script>
+  <!-- FastClick -->
+  <script src="../vendors/fastclick/lib/fastclick.js"></script>
+  <!-- NProgress -->
+  <script src="../vendors/nprogress/nprogress.js"></script>
+  <!-- validator -->
+  <script src="../vendors/validator/validator.js"></script>
+
+  <!-- Custom Theme Scripts -->
+  <script src="../build/js/custom.min.js"></script>
 </html>
