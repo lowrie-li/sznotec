@@ -18,7 +18,7 @@
     <link href="css/vendors/nprogress/nprogress.css" rel="stylesheet">
     <!-- iCheck -->
     <link href="css/vendors/iCheck/skins/flat/green.css" rel="stylesheet">
-	
+    
     <!-- bootstrap-progressbar -->
     <link href="css/vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet">
     <!-- JQVMap -->
@@ -42,33 +42,131 @@
     <script src="css/vendors/jquery/dist/jquery.min.js"></script>
     
     <script type="text/javascript">
-    $(document).ready(function() {
-        alert("AAA");
+      $(document).ready(function() {
         $('#datatable-fixed-header').dataTable( {
-            ajax: {
-                "url":"getJson",
-/*                      "dataSrc":"data", */
-                "dataSrc": function(json) {
-                        alert(JSON.stringify(json));
-                        return json.data;
-                    }
+            language: {
+                "processing": "处理中...",
+                "lengthMenu": "显示 _MENU_ 项结果",
+                "zeroRecords": "没有匹配结果",
+                "info": "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 项",
+                "infoEmpty": "显示第 0 至 0 项结果，共 0 项",
+                "infoFiltered": "(由 _MAX_ 项结果过滤)",
+                "infoPostFix": "",
+                "search": "搜索:",
+                "url": "",
+                "emptyTable": "表中数据为空",
+                "loadingRecords": "载入中...",
+                "infoThousands": ",",
+                "paginate": {
+                    "first": "首页",
+                    "previous": "上页",
+                    "next": "下页",
+                    "last": "末页"
                 },
-            columns: [
-                { "title":"序号", "data": "compSno"},
-                { "title":"客户编码", "data": "shrtName"},
-                { "title":"名称", "data": "compName"},
-                { "title":"电话", "data": "compTel"},
-                { "title":"地址", "data": "compAddr"},
-                { "title":"联系人", "data": "cnntName"},
-                { "title":"联系电话", "data": "cnntPhone"},
-                { "title":"职位", "data": "position"},
-                { "title":"客户专员", "data": "specialist"},
-                { "title":"备注", "data": "cmt"}
-            ]
-        } );
-    });
+                "aria": {
+                    "sortAscending": ": 以升序排列此列",
+                    "sortDescending": ": 以降序排列此列"
+                }
+            },
+          /* language:{
+              "decimal":        "",
+              "emptyTable":     "表中数据为空",
+              "info":           "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 记录",
+              "infoEmpty":      "显示第 0 至 0 项结果，共 0 记录",
+              "infoFiltered":   "(从 _MAX_ 项记录中过滤)",
+              "infoPostFix":    "",
+              "thousands":      ",",
+              "lengthMenu":     "显示 _MENU_ 项记录",
+              "loadingRecords": "数据加载中...",
+              "processing":     "后台处理中...",
+              "search":         "查找:",
+              "zeroRecords":    "无匹配记录",
+              "paginate": {
+                  "first":      "首页",
+                  "last":       "尾页",
+                  "next":       "下一页",
+                  "previous":   "上一页"
+              },
+              "aria": {
+                  "sortAscending":  ": 以升序排列此列",
+                  "sortDescending": ": 以降序排列此列"
+              }
+          }， */
+          retrieve: "true",
+          autoWidth:"true",
+          ajax:{
+            "url":"getJson",
+/*          "dataSrc":"data", */
+            "dataSrc": function(json) {
+  /*             alert(JSON.stringify(json)); */
+              return json.data;
+            }
+          },
+          columns: [
+            { "className":"column-title", "title":"序号", "data": "compSno"},
+            { "title":"客户编码", "data": "shrtName"},
+            { "title":"名称", "data": "compName"},
+            { "title":"电话", "data": "compTel"},
+            { "title":"地址", "data": "compAddr"},
+            { "title":"联系人", "data": "cnntName"},
+            { "title":"联系电话", "data": "cnntPhone"},
+            { "title":"职位", "data": "position"},
+            { "title":"客户专员", "data": "specialist"},
+            { "title":"备注", "data": "cmt"},
+            { "title":"操作","data": ""}
+          ] ,
+          columnDefs: [
+            {"targets": [10], /*"render": function(data, type, full) {
+                 return '<a href="#myModal" role="button" class="btn btn-default" data-toggle="modal"><i class="fa fa-pencil"></i>编辑</a>'; 
+                return '<button type="button" id="editrow" class="btn btn-default" href="#"><i class="fa fa-pencil"></i>编辑</a>';
+                return '<a href="#" class="btn btn-default" onclick="editCustomer(\'' + row.id + '\')"><i class="fa fa-pencil"></i>编辑</a>';
+              }*/
+              "defaultContent": '<button type="button" id="editB" class="btn btn-default" href="#"><i class="fa fa-pencil"></i>编辑</a>'
+            }
+          ]
+        });
+        
+        $('#datatable-fixed-header tbody').on( 'click', 'button#editB', function () {
+            var table = $('#datatable-fixed-header').DataTable();
+            var data = table.row( $(this).parents('tr') ).data();
+            alert("AAA");
+            /* var fields = $("#add-form").serializeArray();
+            jQuery.each( fields, function(i, field){
+                //jquery根据name属性查找
+                $(":input[name='"+field.name+"']").val(data[i]);
+            });
+            $(":input[name='mark']").val("edit");
+            $("#modal-form").modal("show");//弹出框show */
+            
+        });
+      });
+      
+      function editCustomer(name) {
+          alert(name);
+      }
+      
+      function del(id, name) {
+          $.ajax({
+              url: "deleteCustomer",
+              //在后台接受id这个参数
+
+              data: {
+                  id: id
+              },
+              success: function(data) {
+                  if (data.flag) {
+                      //如果后台删除成功，则刷新表格，并提示用户删除成功
+
+                      //保留分页信息
+
+                      table.ajax.reload(null, false);
+                      alert(name + data.msg);
+                  }
+              }
+          })
+      }
+      
     </script>
-    
   </head>
   
   <body class="nav-md">
@@ -110,7 +208,7 @@
                   </li>
                   <li class=""><a><i class="fa fa-edit"></i> 销售 <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu" style="display: none;">
-<!--                       <li><a href="customer.jsp">客户管理</a></li> -->
+<!--                  <li><a href="customer.jsp">客户管理</a></li> -->
                       <li><a href="customers.jsp">客户管理</a></li>
                       <li><a href="form_advanced.html">销售订单</a></li>
                       <li><a href="form_validation.html">销售报表</a></li>
@@ -120,8 +218,8 @@
                   </li>
                   <li><a><i class="fa fa-desktop"></i> 产品 <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu" style="">
-                   	  <li><a href="media_gallery.html">采购订单</a></li>
-                   	  <li><a href="form_validation.html">采购审计</a></li>
+                      <li><a href="media_gallery.html">采购订单</a></li>
+                      <li><a href="form_validation.html">采购审计</a></li>
                       <li><a href="general_elements.html">产品管理</a></li>
                       <li><a href="media_gallery.html">产品追踪</a></li>
                     </ul>
@@ -157,7 +255,6 @@
                   </li>
                 </ul>
               </div>
-
             </div>
             <!-- /sidebar menu -->
 
@@ -290,311 +387,177 @@
 
             <div class="row">
               <div class="col-md-12 col-sm-12 col-xs-12">
-                <div class="x_panel">
-                  <div class="col-xs-2">
-                    <!-- required for floating -->
-                    <!-- Nav tabs -->
-                      <ul class="nav nav-tabs tabs-left">
-                        <li class="active"><a href="#query" data-toggle="tab" aria-expanded="true">查询</a>
-                        </li>
-                        <li class=""><a href="#add" data-toggle="tab" aria-expanded="false">新增</a>
-                        </li>
-                        <li class=""><a href="#edit" data-toggle="tab" aria-expanded="false">编辑</a>
-                        </li>
-                      </ul>
-                  </div>
-                  <div class="col-xs-10">
-                      <!-- Tab panes -->
-                      <div class="tab-content">
-                        <div class="tab-pane active" id="query">
-		                  <div class="x_title">
-		                    <h2>客户列表</h2>
-		                    <div class="title_right">
-		                      <div class="col-md-5 col-sm-5 col-xs-9 form-group pull-right top_search">
-		                          <div class="input-group col-md-4 col-sm-4 col-xs-4 pull-left">
-				                    <select id="qtype" class="form-control">
-		                                <option value="compName">公司名</option>
-		                                <option value="shrtName">客户编号</option>
-		                                <option value="specialist">客户专员</option>
-		                             </select>
-		                          </div>
-				                  <div class="input-group col-md-8 col-sm-8 col-xs-8 pull-right">
-				                    <input id="qword" type="text" class="form-control" placeholder="关键字">
-				                    <span class="input-group-btn">
-				                        <button class="btn btn-default " type="button" onclick="search()"> 🔍 </button>
-				                    </span>
-				                  </div>
-				                </div>
-				              </div>
-		                    <div class="clearfix"></div>
-		                  </div>
-		                  <div class="x_content">
-		                    <table id="datatable-fixed-header" class="table table-striped table-bordered dt-responsive nowrap">
-<!-- 		                      <thead>
-		                        <tr>
-		                          <th>编号</th>
-		                          <th>名称</th>
-		                          <th>编码</th>
-		                          <th>电话</th>
-		                          <th>地址</th>
-		                          <th>联络人</th>
-		                          <th>职务</th>
-		                          <th>联系电话</th>
-		                          <th>客户专员</th>
-		                          <th>备注</th>
-		                        </tr>
-		                      </thead>
-		
-		                      <tbody id="customer-details">
-		                      </tbody> -->
-		                    </table>
-		                  </div>
-		                  <div class="clearfix"></div>
-                        </div>
-                        <div class="tab-pane" id="add">
-		                  <div class="x_title">
-		                    <h2> 新增客户</h2>
-		                    <div class="clearfix"></div>
-		                  </div>
-		                  <div class="x_content">
-		                    <form name="addForm" id="addForm" class="form-horizontal form-label-left" action="addCustomer" method="POST">
-		
-		                      <span class="section"> 客户资料 </span>
-		
-		                      <div class="item form-group">
-		                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="compName">客户名称 <span class="required">*</span>
-		                        </label>
-		                        <div class="col-md-6 col-sm-6 col-xs-12">
-		                          <input id="compName"  name="compName" type="text" class="form-control col-md-7 col-xs-12" required="required" data-validate-length-range="6" data-validate-words="2">
-		                        </div>
-		                      </div>
-		                      <div class="item form-group">
-		                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="shrtName">客户编码 <span class="required">*</span>
-		                        </label>
-		                        <div class="col-md-6 col-sm-6 col-xs-12">
-		                          <input id="shrtName" name="shrtName" type="text" class="form-control col-md-7 col-xs-12" required="required"  data-validate-length-range="6" data-validate-words="2">
-		                        </div>
-		                      </div>
-		                      <div class="item form-group">
-		                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="compTel">电话 <span class="required">*</span>
-		                        </label>
-		                        <div class="col-md-6 col-sm-6 col-xs-12">
-		                          <input type="tel" id="compTel" name="compTel" class="form-control col-md-7 col-xs-12" required="required" data-validate-length-range="8,20">
-		                        </div>
-		                      </div>
-		                      <div class="item form-group">
-		                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="compAddr">地址 <span class="required">*</span>
-		                        </label>
-		                        <div class="col-md-6 col-sm-6 col-xs-12">
-		                          <input type="text" id="compAddr" name="compAddr" class="form-control col-md-7 col-xs-12" required="required" data-validate-length-range="4,100">
-		                        </div>
-		                      </div>
-		                      <div class="item form-group">
-		                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="cnntName">联系人 <span class="required">*</span>
-		                        </label>
-		                        <div class="col-md-6 col-sm-6 col-xs-12">
-		                          <input type="text" id="cnntName" name="cnntName" class="form-control col-md-7 col-xs-12" required="required" data-validate-minmax="4,10">
-		                        </div>
-		                      </div>
-		                      <div class="item form-group">
-		                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="cnntPhone">联系电话 <span class="required">*</span>
-		                        </label>
-		                        <div class="col-md-6 col-sm-6 col-xs-12">
-		                          <input type="tel" id="cnntPhone" name="cnntPhone" class="form-control col-md-7 col-xs-12" required="required" data-validate-length-range="8,20">
-		                        </div>
-		                      </div>
-		                      <div class="item form-group">
-		                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="position">职位 <span class="required">*</span>
-		                        </label>
-		                        <div class="col-md-6 col-sm-6 col-xs-12">
-		                          <input id="position" type="text" name="position" class="form-control col-md-7 col-xs-12" required="required">
-		                        </div>
-		                      </div>
-		                      <div class="item form-group">
-		                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="specialist">客户专员 <span class="required">*</span>
-		                        </label>
-		                        <div class="col-md-6 col-sm-6 col-xs-12">
-		                          <input id="specialist" type="text" name="specialist" class="form-control col-md-7 col-xs-12" required="required" data-validate-length-range="4,20">
-		                        </div>
-		                      </div>
-		                      <div class="item form-group">
-		                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="cmt">备注</label>
-		                        <div class="col-md-6 col-sm-6 col-xs-12">
-		                          <textarea id="cmt" name="cmt" class="form-control col-md-7 col-xs-12"></textarea>
-		                        </div>
-		                      </div>
-		                      <div class="ln_solid"></div>
-		                      <div class="form-group">
-		                        <div class="col-md-12 col-md-offset-5">
-		                          <button id="submit" type="submit" class="btn btn-success">提交</button>
-		                          <button id="cancel" type="reset" class="btn btn-primary">取消</button>
-		                        </div>
-		                      </div>
-		                    </form>
-		                  </div>
-		                  <div class="clearfix"></div>
-		                </div>
-                        <div class="tab-pane" id="edit">
-		                  <div class="x_title">
-		                    <h2> 编辑客户</h2>
-		                    <div class="clearfix"></div>
-		                  </div>
-		                  <div class="x_content">
-		                    <form name="editForm" id="editForm" class="form-horizontal form-label-left" action="updateCustomer" method="POST">
-		
-		                      <span class="section"> 客户资料 </span>
-		
-		                      <div class="item form-group">
-		                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="compName">客户名称 <span class="required">*</span>
-		                        </label>
-		                        <div class="col-md-6 col-sm-6 col-xs-12">
-		                          <input id="compName"  name="compName" type="text" class="form-control col-md-7 col-xs-12" required="required" data-validate-length-range="6" data-validate-words="2">
-		                        </div>
-		                      </div>
-		                      <div class="item form-group">
-		                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="shrtName">客户编码 <span class="required">*</span>
-		                        </label>
-		                        <div class="col-md-6 col-sm-6 col-xs-12">
-		                          <input id="shrtName" name="shrtName" type="text" class="form-control col-md-7 col-xs-12" required="required"  data-validate-length-range="6" data-validate-words="2">
-		                        </div>
-		                      </div>
-		                      <div class="item form-group">
-		                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="compTel">电话 <span class="required">*</span>
-		                        </label>
-		                        <div class="col-md-6 col-sm-6 col-xs-12">
-		                          <input type="tel" id="compTel" name="compTel" class="form-control col-md-7 col-xs-12" required="required" data-validate-length-range="8,20">
-		                        </div>
-		                      </div>
-		                      <div class="item form-group">
-		                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="compAddr">地址 <span class="required">*</span>
-		                        </label>
-		                        <div class="col-md-6 col-sm-6 col-xs-12">
-		                          <input type="text" id="compAddr" name="compAddr" class="form-control col-md-7 col-xs-12" required="required" data-validate-length-range="4,100">
-		                        </div>
-		                      </div>
-		                      <div class="item form-group">
-		                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="cnntName">联系人 <span class="required">*</span>
-		                        </label>
-		                        <div class="col-md-6 col-sm-6 col-xs-12">
-		                          <input type="text" id="cnntName" name="cnntName" class="form-control col-md-7 col-xs-12" required="required" data-validate-minmax="4,10">
-		                        </div>
-		                      </div>
-		                      <div class="item form-group">
-		                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="cnntPhone">联系电话 <span class="required">*</span>
-		                        </label>
-		                        <div class="col-md-6 col-sm-6 col-xs-12">
-		                          <input type="tel" id="cnntPhone" name="cnntPhone" class="form-control col-md-7 col-xs-12" required="required" data-validate-length-range="8,20">
-		                        </div>
-		                      </div>
-		                      <div class="item form-group">
-		                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="position">职位 <span class="required">*</span>
-		                        </label>
-		                        <div class="col-md-6 col-sm-6 col-xs-12">
-		                          <input id="position" type="text" name="position" class="form-control col-md-7 col-xs-12" required="required">
-		                        </div>
-		                      </div>
-		                      <div class="item form-group">
-		                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="specialist">客户专员 <span class="required">*</span>
-		                        </label>
-		                        <div class="col-md-6 col-sm-6 col-xs-12">
-		                          <input id="specialist" type="text" name="specialist" class="form-control col-md-7 col-xs-12" required="required" data-validate-length-range="4,20">
-		                        </div>
-		                      </div>
-		                      <div class="item form-group">
-		                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="cmt">备注</label>
-		                        <div class="col-md-6 col-sm-6 col-xs-12">
-		                          <textarea id="cmt" name="cmt" class="form-control col-md-7 col-xs-12"></textarea>
-		                        </div>
-		                      </div>
-		                      <div class="ln_solid"></div>
-		                      <div class="form-group">
-		                        <div class="col-md-12 col-md-offset-5">
-		                          <button id="submit" type="submit" class="btn btn-success">提交</button>
-		                          <button id="cancel" type="reset" class="btn btn-primary">取消</button>
-		                        </div>
-		                      </div>
-		                    </form>
-		                  </div>
-		                  <div class="clearfix"></div>
-		                </div>
+                <div class="x_title">
+                  <div class="title_right">
+                    <div class="col-md-4 col-sm-4 col-xs-12 form-group pull-middle">
+                      <div class="input-group col-md-4 col-sm-4 col-xs-4 pull-left">
+                        <a href="#myModal" role="button" class="btn btn-default" data-toggle="modal"><i class="fa fa-plus"></i>新增客户</a>
                       </div>
                     </div>
+                  </div>
+                  <div class="clearfix"></div>
                 </div>
+                <div class="x_content">
+<!--                   <table id="datatable-fixed-header" class="table table-striped table-bordered table-responsive nowrap"></table> -->
+                  <table id="datatable-fixed-header" class="table table-striped table-bordered dt-responsive nowrap dataTable no-footer dtr-inline collapsed"></table>
+                </div>
+                <div class="clearfix"></div>
               </div>
             </div>
-           </div>
-        </div>
-        <!-- /page content -->
-
-        <!-- footer content -->
-        <footer>
-          <div class="pull-right">
-            SZNOTEC管理系统 供应商：<a href="https://www.sznotec.com">深圳欣诺泰电子有限公司</a>
           </div>
-          <div class="clearfix"></div>
-        </footer>
-        <!-- /footer content -->
-      </div>
-    </div>
-
-    <!-- jQuery -->
-    <script src="css/vendors/jquery/dist/jquery.min.js"></script>
-    <!-- Bootstrap -->
-    <script src="css/vendors/bootstrap/dist/js/bootstrap.min.js"></script>
-    <!-- FastClick -->
-    <script src="css/vendors/fastclick/lib/fastclick.js"></script>
-    <!-- NProgress -->
-    <script src="css/vendors/nprogress/nprogress.js"></script>
-    <!-- Chart.js -->
-    <script src="css/vendors/Chart.js/dist/Chart.min.js"></script>
-    <!-- gauge.js -->
-    <script src="css/vendors/gauge.js/dist/gauge.min.js"></script>
-    <!-- bootstrap-progressbar -->
-    <script src="css/vendors/bootstrap-progressbar/bootstrap-progressbar.min.js"></script>
-    <!-- iCheck -->
-    <script src="css/vendors/iCheck/icheck.min.js"></script>
-    <!-- Skycons -->
-    <script src="css/vendors/skycons/skycons.js"></script>
-    <!-- Flot -->
-    <script src="css/vendors/Flot/jquery.flot.js"></script>
-    <script src="css/vendors/Flot/jquery.flot.pie.js"></script>
-    <script src="css/vendors/Flot/jquery.flot.time.js"></script>
-    <script src="css/vendors/Flot/jquery.flot.stack.js"></script>
-    <script src="css/vendors/Flot/jquery.flot.resize.js"></script>
-    <!-- Flot plugins -->
-    <script src="css/vendors/flot.orderbars/js/jquery.flot.orderBars.js"></script>
-    <script src="css/vendors/flot-spline/js/jquery.flot.spline.min.js"></script>
-    <script src="css/vendors/flot.curvedlines/curvedLines.js"></script>
-    <!-- DateJS -->
-    <script src="css/vendors/DateJS/build/date.js"></script>
-    <!-- JQVMap -->
-    <script src="css/vendors/jqvmap/dist/jquery.vmap.js"></script>
-    <script src="css/vendors/jqvmap/dist/maps/jquery.vmap.world.js"></script>
-    <script src="css/vendors/jqvmap/examples/js/jquery.vmap.sampledata.js"></script>
-    <!-- bootstrap-daterangepicker -->
-    <script src="css/vendors/moment/min/moment.min.js"></script>
-    <script src="css/vendors/bootstrap-daterangepicker/daterangepicker.js"></script>
-    <!-- iCheck -->
-    <script src="css/vendors/iCheck/icheck.min.js"></script>
-    <!-- Datatables -->
-    <script src="css/vendors/datatables.net/js/jquery.dataTables.min.js"></script>
-    <script src="css/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
-    <script src="css/vendors/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
-    <script src="css/vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js"></script>
-    <script src="css/vendors/datatables.net-buttons/js/buttons.flash.min.js"></script>
-    <script src="css/vendors/datatables.net-buttons/js/buttons.html5.min.js"></script>
-    <script src="css/vendors/datatables.net-buttons/js/buttons.print.min.js"></script>
-    <script src="css/vendors/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
-    <script src="css/vendors/datatables.net-keytable/js/dataTables.keyTable.min.js"></script>
-    <script src="css/vendors/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
-    <script src="css/vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js"></script>
-    <script src="css/vendors/datatables.net-scroller/js/dataTables.scroller.min.js"></script>
-    <script src="css/vendors/jszip/dist/jszip.min.js"></script>
-    <script src="css/vendors/pdfmake/build/pdfmake.min.js"></script>
-    <script src="css/vendors/pdfmake/build/vfs_fonts.js"></script>
+        </div>
     
-    <!-- Custom Theme Scripts -->
-    <script src="css/build/js/custom.min.js"></script>
-  </body>
+    <!-- /page content -->
 
+    <!-- footer content -->
+    <footer>
+      <div class="pull-right">
+        SZNOTEC管理系统 供应商：<a href="https://www.sznotec.com">深圳欣诺泰电子有限公司</a>
+      </div>
+      <div class="clearfix"></div>
+    </footer>
+    <!-- /footer content -->
+    </div>
+  </div>
+  
+  <!-- 模态框（Modal） -->
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    客户资料
+                </h4>
+            </div>
+            <div class="modal-body">
+              <form name="addForm" id="addForm" class="form-horizontal form-label-left" action="addCustomer" method="POST">
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="compName">客户名称 <span class="required">*</span></label>
+                  <div class="col-md-6 col-sm-6 col-xs-12">
+                    <input id="compName"  name="compName" type="text" class="form-control col-md-7 col-xs-12" required="required" data-validate-length-range="6" data-validate-words="2">
+                  </div>
+                </div>
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="shrtName">客户编码 <span class="required">*</span></label>
+                  <div class="col-md-6 col-sm-6 col-xs-12">
+                    <input id="shrtName" name="shrtName" type="text" class="form-control col-md-7 col-xs-12" required="required"  data-validate-length-range="6" data-validate-words="2">
+                  </div>
+                </div>
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="compTel">电话 <span class="required">*</span></label>
+                  <div class="col-md-6 col-sm-6 col-xs-12">
+                    <input type="tel" id="compTel" name="compTel" class="form-control col-md-7 col-xs-12" required="required" data-validate-length-range="8,20">
+                  </div>
+                 </div>
+                 <div class="item form-group">
+                   <label class="control-label col-md-3 col-sm-3 col-xs-12" for="compAddr">地址 <span class="required">*</span></label>
+                   <div class="col-md-6 col-sm-6 col-xs-12">
+                     <input type="text" id="compAddr" name="compAddr" class="form-control col-md-7 col-xs-12" required="required" data-validate-length-range="4,100">
+                   </div>
+                 </div>
+                 <div class="item form-group">
+                   <label class="control-label col-md-3 col-sm-3 col-xs-12" for="cnntName">联系人 <span class="required">*</span></label>
+                   <div class="col-md-6 col-sm-6 col-xs-12">
+                     <input type="text" id="cnntName" name="cnntName" class="form-control col-md-7 col-xs-12" required="required" data-validate-minmax="4,10">
+                   </div>
+                 </div>
+                 <div class="item form-group">
+                   <label class="control-label col-md-3 col-sm-3 col-xs-12" for="cnntPhone">联系电话 <span class="required">*</span></label>
+                   <div class="col-md-6 col-sm-6 col-xs-12">
+                     <input type="tel" id="cnntPhone" name="cnntPhone" class="form-control col-md-7 col-xs-12" required="required" data-validate-length-range="8,20">
+                   </div>
+                 </div>
+                 <div class="item form-group">
+                   <label class="control-label col-md-3 col-sm-3 col-xs-12" for="position">职位 <span class="required">*</span></label>
+                   <div class="col-md-6 col-sm-6 col-xs-12">
+                     <input id="position" type="text" name="position" class="form-control col-md-7 col-xs-12" required="required">
+                   </div>
+                 </div>
+                 <div class="item form-group">
+                   <label class="control-label col-md-3 col-sm-3 col-xs-12" for="specialist">客户专员 <span class="required">*</span></label>
+                   <div class="col-md-6 col-sm-6 col-xs-12">
+                     <input id="specialist" type="text" name="specialist" class="form-control col-md-7 col-xs-12" required="required" data-validate-length-range="4,20">
+                   </div>
+                 </div>
+                 <div class="item form-group">
+                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="cmt">备注</label>
+                   <div class="col-md-6 col-sm-6 col-xs-12">
+                     <textarea id="cmt" name="cmt" class="form-control col-md-7 col-xs-12"></textarea>
+                   </div>
+                 </div>
+                 <div class="ln_solid"></div>
+                 <div class="form-group">
+                   <div class="col-md-12 col-md-offset-5">
+                     <button id="submit" type="submit" class="btn btn-success">提交</button>
+                     <button id="cancel" type="reset" class="btn btn-primary" data-dismiss="modal">取消</button>
+                   </div>
+                 </div>
+              </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+  <!-- jQuery -->
+  <script src="css/vendors/jquery/dist/jquery.min.js"></script>
+  <!-- Bootstrap -->
+  <script src="css/vendors/bootstrap/dist/js/bootstrap.min.js"></script>
+  <!-- FastClick -->
+<!--   <script src="css/vendors/fastclick/lib/fastclick.js"></script> -->
+  <!-- NProgress -->
+<!--   <script src="css/vendors/nprogress/nprogress.js"></script> -->
+  <!-- Chart.js -->
+<!--   <script src="css/vendors/Chart.js/dist/Chart.min.js"></script> -->
+  <!-- gauge.js -->
+<!--   <script src="css/vendors/gauge.js/dist/gauge.min.js"></script> -->
+  <!-- bootstrap-progressbar -->
+  <script src="css/vendors/bootstrap-progressbar/bootstrap-progressbar.min.js"></script>
+  <!-- iCheck -->
+  <script src="css/vendors/iCheck/icheck.min.js"></script>
+  <!-- Skycons -->
+  <script src="css/vendors/skycons/skycons.js"></script>
+  <!-- Flot -->
+  <script src="css/vendors/Flot/jquery.flot.js"></script>
+  <script src="css/vendors/Flot/jquery.flot.pie.js"></script>
+  <script src="css/vendors/Flot/jquery.flot.time.js"></script>
+  <script src="css/vendors/Flot/jquery.flot.stack.js"></script>
+  <script src="css/vendors/Flot/jquery.flot.resize.js"></script>
+  <!-- Flot plugins -->
+  <script src="css/vendors/flot.orderbars/js/jquery.flot.orderBars.js"></script>
+  <script src="css/vendors/flot-spline/js/jquery.flot.spline.min.js"></script>
+  <script src="css/vendors/flot.curvedlines/curvedLines.js"></script>
+  <!-- DateJS -->
+  <script src="css/vendors/DateJS/build/date.js"></script>
+  <!-- JQVMap -->
+  <script src="css/vendors/jqvmap/dist/jquery.vmap.js"></script>
+  <script src="css/vendors/jqvmap/dist/maps/jquery.vmap.world.js"></script>
+  <script src="css/vendors/jqvmap/examples/js/jquery.vmap.sampledata.js"></script>
+  <!-- bootstrap-daterangepicker -->
+  <script src="css/vendors/moment/min/moment.min.js"></script>
+  <script src="css/vendors/bootstrap-daterangepicker/daterangepicker.js"></script>
+  <!-- iCheck -->
+  <script src="css/vendors/iCheck/icheck.min.js"></script>
+  <!-- Datatables -->
+  <script src="css/vendors/datatables.net/js/jquery.dataTables.min.js"></script>
+  <script src="css/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+  <script src="css/vendors/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+  <script src="css/vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js"></script>
+  <script src="css/vendors/datatables.net-buttons/js/buttons.flash.min.js"></script>
+  <script src="css/vendors/datatables.net-buttons/js/buttons.html5.min.js"></script>
+  <script src="css/vendors/datatables.net-buttons/js/buttons.print.min.js"></script>
+  <script src="css/vendors/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
+  <script src="css/vendors/datatables.net-keytable/js/dataTables.keyTable.min.js"></script>
+  <script src="css/vendors/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+  <script src="css/vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js"></script>
+  <script src="css/vendors/datatables.net-scroller/js/dataTables.scroller.min.js"></script>
+  <script src="css/vendors/jszip/dist/jszip.min.js"></script>
+  <script src="css/vendors/pdfmake/build/pdfmake.min.js"></script>
+  <script src="css/vendors/pdfmake/build/vfs_fonts.js"></script>
+  
+  <!-- Custom Theme Scripts -->
+  <script src="css/build/js/custom.min.js"></script>
+  </body>
 </html>

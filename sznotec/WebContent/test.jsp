@@ -116,18 +116,33 @@
             { "title":"操作","data": ""}
           ] ,
           columnDefs: [
-            {"targets": [10], "render": function(data, type, full) {
-                return '<a href="#myModal" role="button" class="btn" data-toggle="modal"><i class="fa fa-pencil"></i>编辑</a>';
-                return '<a type="button" class="btn btn-default" href="#">编辑</a>';
-                return '<a href="#" onclick="editCustomer(\'' + full.shrtName + '\')"><i class="fa fa-pencil"></i>编辑</a>';
-              }
+            {"targets": [10], /*"render": function(data, type, full) {
+                 return '<a href="#myModal" role="button" class="btn btn-default" data-toggle="modal"><i class="fa fa-pencil"></i>编辑</a>'; 
+                return '<button type="button" id="editrow" class="btn btn-default" href="#"><i class="fa fa-pencil"></i>编辑</a>';
+                return '<a href="#" class="btn btn-default" onclick="editCustomer(\'' + row.id + '\')"><i class="fa fa-pencil"></i>编辑</a>';
+              }*/
+              "defaultContent": '<button type="button" id="editB" class="btn btn-default" href="#"><i class="fa fa-pencil"></i>编辑</a>'
             }
           ]
         });
+        
+        $('#datatable-fixed-header tbody').on( 'click', 'button#editB', function () {
+            var table = $('#datatable-fixed-header').DataTable();
+            var data = table.row( $(this).parents('tr') ).data();
+            alert("AAA");
+            /* var fields = $("#add-form").serializeArray();
+            jQuery.each( fields, function(i, field){
+                //jquery根据name属性查找
+                $(":input[name='"+field.name+"']").val(data[i]);
+            });
+            $(":input[name='mark']").val("edit");
+            $("#modal-form").modal("show");//弹出框show */
+            
+        });
       });
       
-      function editCustomer(shrtName) {
-          alert(shrtName);
+      function editCustomer(name) {
+          alert(name);
       }
       
       function del(id, name) {
@@ -150,11 +165,11 @@
               }
           })
       }
+      
     </script>
   </head>
   
   <body class="nav-md">
-    <a href="javascript:void(0)" class="btn btn-default" onclick="showStr('ZZZZ')">AAA</a>
     <div class="container body">
       <div class="main_container">
         <div class="col-md-3 left_col menu_fixed">
@@ -376,7 +391,7 @@
                   <div class="title_right">
                     <div class="col-md-4 col-sm-4 col-xs-12 form-group pull-middle">
                       <div class="input-group col-md-4 col-sm-4 col-xs-4 pull-left">
-                        <a href="#myModal" role="button" class="btn" data-toggle="modal"><i class="fa fa-plus"></i>新增客户</a>
+                        <a href="#myModal" role="button" class="btn btn-default" data-toggle="modal"><i class="fa fa-plus"></i>新增客户</a>
                       </div>
                     </div>
                   </div>
@@ -414,12 +429,11 @@
                     &times;
                 </button>
                 <h4 class="modal-title" id="myModalLabel">
-                    模态框（Modal）标题
+                    客户资料
                 </h4>
             </div>
             <div class="modal-body">
               <form name="addForm" id="addForm" class="form-horizontal form-label-left" action="addCustomer" method="POST">
-                <span class="section"> 客户资料 </span>
                 <div class="item form-group">
                   <label class="control-label col-md-3 col-sm-3 col-xs-12" for="compName">客户名称 <span class="required">*</span></label>
                   <div class="col-md-6 col-sm-6 col-xs-12">
@@ -444,48 +458,44 @@
                      <input type="text" id="compAddr" name="compAddr" class="form-control col-md-7 col-xs-12" required="required" data-validate-length-range="4,100">
                    </div>
                  </div>
-                   <div class="item form-group">
-                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="cnntName">联系人 <span class="required">*</span>
-                                </label>
-                                <div class="col-md-6 col-sm-6 col-xs-12">
-                                  <input type="text" id="cnntName" name="cnntName" class="form-control col-md-7 col-xs-12" required="required" data-validate-minmax="4,10">
-                                </div>
-                              </div>
-                              <div class="item form-group">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="cnntPhone">联系电话 <span class="required">*</span>
-                                </label>
-                                <div class="col-md-6 col-sm-6 col-xs-12">
-                                  <input type="tel" id="cnntPhone" name="cnntPhone" class="form-control col-md-7 col-xs-12" required="required" data-validate-length-range="8,20">
-                                </div>
-                              </div>
-                              <div class="item form-group">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="position">职位 <span class="required">*</span>
-                                </label>
-                                <div class="col-md-6 col-sm-6 col-xs-12">
-                                  <input id="position" type="text" name="position" class="form-control col-md-7 col-xs-12" required="required">
-                                </div>
-                              </div>
-                              <div class="item form-group">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="specialist">客户专员 <span class="required">*</span>
-                                </label>
-                                <div class="col-md-6 col-sm-6 col-xs-12">
-                                  <input id="specialist" type="text" name="specialist" class="form-control col-md-7 col-xs-12" required="required" data-validate-length-range="4,20">
-                                </div>
-                              </div>
-                              <div class="item form-group">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="cmt">备注</label>
-                                <div class="col-md-6 col-sm-6 col-xs-12">
-                                  <textarea id="cmt" name="cmt" class="form-control col-md-7 col-xs-12"></textarea>
-                                </div>
-                              </div>
-                              <div class="ln_solid"></div>
-                              <div class="form-group">
-                                <div class="col-md-12 col-md-offset-5">
-                                  <button id="submit" type="submit" class="btn btn-success">提交</button>
-                                  <button id="cancel" type="reset" class="btn btn-primary" data-dismiss="modal">取消</button>
-                                </div>
-                              </div>
-                            </form>
+                 <div class="item form-group">
+                   <label class="control-label col-md-3 col-sm-3 col-xs-12" for="cnntName">联系人 <span class="required">*</span></label>
+                   <div class="col-md-6 col-sm-6 col-xs-12">
+                     <input type="text" id="cnntName" name="cnntName" class="form-control col-md-7 col-xs-12" required="required" data-validate-minmax="4,10">
+                   </div>
+                 </div>
+                 <div class="item form-group">
+                   <label class="control-label col-md-3 col-sm-3 col-xs-12" for="cnntPhone">联系电话 <span class="required">*</span></label>
+                   <div class="col-md-6 col-sm-6 col-xs-12">
+                     <input type="tel" id="cnntPhone" name="cnntPhone" class="form-control col-md-7 col-xs-12" required="required" data-validate-length-range="8,20">
+                   </div>
+                 </div>
+                 <div class="item form-group">
+                   <label class="control-label col-md-3 col-sm-3 col-xs-12" for="position">职位 <span class="required">*</span></label>
+                   <div class="col-md-6 col-sm-6 col-xs-12">
+                     <input id="position" type="text" name="position" class="form-control col-md-7 col-xs-12" required="required">
+                   </div>
+                 </div>
+                 <div class="item form-group">
+                   <label class="control-label col-md-3 col-sm-3 col-xs-12" for="specialist">客户专员 <span class="required">*</span></label>
+                   <div class="col-md-6 col-sm-6 col-xs-12">
+                     <input id="specialist" type="text" name="specialist" class="form-control col-md-7 col-xs-12" required="required" data-validate-length-range="4,20">
+                   </div>
+                 </div>
+                 <div class="item form-group">
+                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="cmt">备注</label>
+                   <div class="col-md-6 col-sm-6 col-xs-12">
+                     <textarea id="cmt" name="cmt" class="form-control col-md-7 col-xs-12"></textarea>
+                   </div>
+                 </div>
+                 <div class="ln_solid"></div>
+                 <div class="form-group">
+                   <div class="col-md-12 col-md-offset-5">
+                     <button id="submit" type="submit" class="btn btn-success">提交</button>
+                     <button id="cancel" type="reset" class="btn btn-primary" data-dismiss="modal">取消</button>
+                   </div>
+                 </div>
+              </form>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal -->
