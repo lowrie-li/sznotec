@@ -2,6 +2,11 @@ package com.sznotec.dao;
 
 import java.io.*;
 import java.sql.*;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.naming.NamingException;
@@ -19,6 +24,8 @@ public class DbConnection {
 	private transient Statement stmt = null;
 	private transient ResultSet resultSet = null;
 	private transient PreparedStatement PrepStmt = null;
+	
+	private static final String STR_FORMAT = "00000"; 
 
 	public DbConnection() {
 		//Read the Database configurations.
@@ -60,22 +67,22 @@ public class DbConnection {
 		}
 	}
  
-	public PreparedStatement GetPrepStmt(String StrSql) throws SQLException {
+	public PreparedStatement getPrepStmt(String StrSql) throws SQLException {
 		PrepStmt = dbConn.prepareStatement(StrSql);
 		return PrepStmt;
 	}
  
-	public void SetMaxTime(Statement stmt, int times) throws SQLException {
+	public void setMaxTime(Statement stmt, int times) throws SQLException {
 		stmt.setQueryTimeout(times);
 	}
   
-	public ResultSet RunQuery(String sqlSentence) throws SQLException {
+	public ResultSet runQuery(String sqlSentence) throws SQLException {
 		System.out.println(sqlSentence);
 		resultSet = stmt.executeQuery(sqlSentence);
 		return resultSet;
 	}
 	
-	public String GetJsonResult(String sqlSentence) throws SQLException {
+	public JSONArray getJsonResult(String sqlSentence) throws SQLException {
 		System.out.println(sqlSentence);
 		resultSet = stmt.executeQuery(sqlSentence);
 			
@@ -96,29 +103,62 @@ public class DbConnection {
 				array.add(jsonObj);
 			}while(resultSet.next());
 		}
-		return array.toString();
+		return array;
+	}
+	
+	public List<Map<String, String>> getListResult(String sqlSentence) throws SQLException {
+		System.out.println(sqlSentence);
+		resultSet = stmt.executeQuery(sqlSentence);
+			
+		List<Map<String, String>> data = new ArrayList<Map<String, String>>();
+		
+		ResultSetMetaData metaData = resultSet.getMetaData();
+		
+		int colCount = metaData.getColumnCount();
+		
+		if (resultSet.first()) {
+			String value = null;
+		    do {
+		      	Map<String, String> row = new HashMap<String, String>();;
+				for(int i = 1; i < colCount + 1; i++) {
+					if (null != resultSet.getObject(i)) {
+						if (metaData.getColumnType(i) == 4)  { // transform int to char
+						    	DecimalFormat df = new DecimalFormat(STR_FORMAT);
+						    value = df.format(resultSet.getObject(i));
+						} else {
+							value = resultSet.getObject(i).toString();
+						}
+						row.put(metaData.getColumnLabel(i), value);
+					} else {
+						row.put(metaData.getColumnLabel(i), "-");
+					}
+				}
+				data.add(row);
+			}while(resultSet.next());
+		}
+		return data;
 	}
   
-	public void AddBatch(String StrSql) throws SQLException {
+	public void addBatch(String StrSql) throws SQLException {
 		stmt.addBatch(StrSql);
 	}
 
-	public int RunUpdate(String sqlSentence) throws SQLException,NamingException {
+	public int runUpdate(String sqlSentence) throws SQLException,NamingException {
 		System.out.println(sqlSentence);
 		int i=-1;
 		i=stmt.executeUpdate(sqlSentence);
 		return i;
 	}
   
-	public void Close() {
-		CloseStmt();
-		CloseRs();
-		CloseCon();
-		ClosePrepStmt();
+	public void close() {
+		closeStmt();
+		closeRs();
+		closeCon();
+		closePrepStmt();
 	}
 
   
-	public void CloseRs() {
+	public void closeRs() {
 		try {
 			if (resultSet != null) {
 				resultSet.close();
@@ -129,7 +169,7 @@ public class DbConnection {
 	/**
 	* 关闭数据库连接
 	*/
-	public void CloseCon() {
+	public void closeCon() {
 		try {
 			if (dbConn != null) {
 				dbConn.close();
@@ -140,7 +180,7 @@ public class DbConnection {
 	/**
 	* 关闭Statement
 	*/
-	public void CloseStmt() {
+	public void closeStmt() {
 		try {
 			if (stmt != null) {
 				stmt.close();
@@ -151,7 +191,7 @@ public class DbConnection {
 	/**
 	* 关闭预处理语句
 	*/
-	public void ClosePrepStmt() {
+	public void closePrepStmt() {
 		try {
 			if (PrepStmt != null) {
 				PrepStmt.close();
@@ -159,7 +199,7 @@ public class DbConnection {
 		}catch (Exception ex) {}
 	}
 
-	public void SetAutoCommit(boolean isAutoCommit){
+	public void setAutoCommit(boolean isAutoCommit){
 		try {
 			dbConn.setAutoCommit(isAutoCommit);
 		} catch (SQLException e) {

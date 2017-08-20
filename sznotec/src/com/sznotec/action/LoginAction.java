@@ -73,8 +73,8 @@ public class LoginAction implements Action{
 		try{
 			DbConnection dbconn = new DbConnection();
 			
-			String sql_str = "select * from UserRole where uid = '" + id + "' and password = '" + pwd + "';";
-			ResultSet rs = dbconn.RunQuery(sql_str);
+			String sqlStr = "select * from UserRole where uid = '" + id + "' and password = '" + pwd + "';";
+			ResultSet rs = dbconn.runQuery(sqlStr);
 			
 			if(rs.next()) {
 				request.getSession().setAttribute("errno","none");
@@ -102,8 +102,8 @@ public class LoginAction implements Action{
 		try{
 			DbConnection dbconn = new DbConnection();
 			
-			String sql_str = "select * from UserRole where uid='" + uid + "' or empSno= '" + empSno + "';";
-			ResultSet rs = dbconn.RunQuery(sql_str);
+			String sqlStr = "select * from UserRole where uid='" + uid + "' or empSno= '" + empSno + "';";
+			ResultSet rs = dbconn.runQuery(sqlStr);
 			
 			if(rs.next()) {
 				request.getSession().setAttribute("errno","none");

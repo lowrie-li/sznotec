@@ -22,8 +22,8 @@ public class CustomerAction extends ActionSupport{
 	 */
 	private static DbConnection dbConn = new DbConnection();
 
-	private Map<String, Object> jsonRs=null;
-    private String jsonStr;
+	private Map<String, Object> jsonRs=new HashMap<String, Object>();
+	private List<Map<String, String>> data = new ArrayList<Map<String, String>>();
     
     private String qtype;
     private String qword;
@@ -35,27 +35,11 @@ public class CustomerAction extends ActionSupport{
     public Map<String, Object> getJsonRs() {
     		return this.jsonRs;
     }
-    
-	public void setQtype(String type){
-		this.qtype = type;
-	}
-	
-	public String getQtype() {
-		return this.qtype;
-	}
-	
-	public void setQword(String word) {
-		this.qword = word;
-	}
-	
-	public String getQword() {
-		return this.qword;
-	}
+ 
 	
     public String getJson() throws Exception {
     		String str1 = ServletActionContext.getRequest().getParameter("parm1");
     		String str2 = ServletActionContext.getRequest().getParameter("parm2");
-    		jsonRs=new HashMap<String, Object>();
     		Map<String, String> row = new HashMap<String, String>();
     		row.put("compSno", "00001");
     		row.put("shrtName", "ORCL");
@@ -79,14 +63,14 @@ public class CustomerAction extends ActionSupport{
     		row2.put("specialist", "李生");
     		row2.put("cmt", "xxxx");
     		Map<String, String> row3 = new HashMap<String, String>();
-    		row3.put("compSno", "00011");
+    		row3.put("compSno", "00003");
     		row3.put("shrtName", "ORCL");
     		row3.put("compName", "ORACLE");
     		row3.put("compTel", "075583965159");
     		row3.put("compAddr", "深圳南山高新园");
     		row3.put("cnntName", "李生");
     		row3.put("cnntPhone", "18675506543");
-    		row3.put("position", "SMTS");
+    		row3.put("position", "PL");
     		row3.put("specialist", "李生");
     		row3.put("cmt", "xxxx");
     		Map<String, String> row4 = new HashMap<String, String>();
@@ -111,22 +95,31 @@ public class CustomerAction extends ActionSupport{
     		row5.put("position", "SMTS");
     		row5.put("specialist", "李生");
     		row5.put("cmt", "xxxx");
-    		List<Map<String, String>> data = new ArrayList<Map<String, String>>();
-    		data.add(row);
-    		data.add(row2);
-    		data.add(row3);
-    		data.add(row4);
-    		data.add(row5);
-//    		search();
+
+//    		List<Map<String, String>> data1 = new ArrayList<Map<String, String>>();
+    		data.clear();
+//    		data.add(row);
+//    		data.add(row2);
+//    		data.add(row3);
+//    		data.add(row4);
+//    		data.add(row5);
+    		search();
+    		System.out.println(data.toString());
+    		System.out.println("++++++++++++++++");
+//    		System.out.println(search().toString());
+//    		JSONArray tmpArray = search();
     		jsonRs.put("sayHi", str1 + " " + str2);
-    		jsonRs.put("data", data);
+//    		jsonRs.put("data", data);
     		jsonRs.put("isSuccess", "true");
-    		jsonRs.put("emsg", "fetch data error");
+    		jsonRs.put("msg", "fetch data error");
     		return Action.SUCCESS;
     }
     
 	public String add() throws Exception {
 
+		data.clear();
+		jsonRs.clear();
+		
 		String compName = ServletActionContext.getRequest().getParameter("compName");
 		String shrtName = ServletActionContext.getRequest().getParameter("shrtName");
 		String compTel = ServletActionContext.getRequest().getParameter("compName");
@@ -139,20 +132,24 @@ public class CustomerAction extends ActionSupport{
 
 		String chkExist = "SELECT * FROM Companies WHERE compName = '"
 						 + compName + "' OR shrtName = '" + shrtName +"';";
-		ResultSet resultSet = dbConn.RunQuery(chkExist);
+		ResultSet resultSet = dbConn.runQuery(chkExist);
 		if(resultSet.first()) {         //公司名／编号已经被使用
 			if ((boolean)resultSet.getObject("isCustomer") == true) {
-				System.out.println("公司名／编码已被客户使用！");
-				return Action.ERROR;
+				jsonRs.put("isSuccess", "false");
+				jsonRs.put("msg", "公司名／编码已被客户使用！");
+				return Action.SUCCESS;
 			} else {
 				System.out.println("公司名／编码已被供应商使用，将其更新为客户！");
 				String updateStr = "UPDATE Companies SET isCustomer=1 WHERE shrtName = '" + shrtName +"';";
-				if (dbConn.RunUpdate(updateStr) == 1) {
-					System.out.println("成功将供应商更新为客户！");
-					return Action.NONE;
+				if (dbConn.runUpdate(updateStr) == 1) {
+					jsonRs.put("isSuccess", "true");
+					jsonRs.put("msg", "成功将供应商更新为客户!");
+					System.out.println("成功将供应商更新为客户!");
+					return Action.SUCCESS;
 				} else {
-					System.out.println("将供应商更新为客户失败");
-					return Action.ERROR;
+					jsonRs.put("isSuccess", "true");
+					jsonRs.put("msg", "将供应商更新为客户失败!");
+					return Action.SUCCESS;
 				}
 			}
 		} else {
@@ -162,12 +159,14 @@ public class CustomerAction extends ActionSupport{
 					        + cmt + "'";
 			String addStr = "INSERT INTO Companies(" + colStr + ") VALUES (" + valStr + ");";
 			System.out.println(addStr);
-			if (dbConn.RunUpdate(addStr) == 1) {
-				System.out.println("添加客户成功！");
-				return Action.NONE;
+			if (dbConn.runUpdate(addStr) == 1) {
+				jsonRs.put("isSuccess", "true");
+				jsonRs.put("msg", "成功创建新客户资料!");
+				return Action.SUCCESS;
 			} else {
-				System.out.println("添加客户失败！");
-				return Action.ERROR;
+				jsonRs.put("isSuccess", "false");
+				jsonRs.put("msg", "添加客户失败！");
+				return Action.SUCCESS;
 			}
 
 		}
@@ -175,42 +174,54 @@ public class CustomerAction extends ActionSupport{
 	}
 
 	public String delete() throws Exception {
+
+		data.clear();
+		jsonRs.clear();
 		
 		String shrtName = ServletActionContext.getRequest().getParameter("shrtName");
 		String chkExist = "SELECT * FROM Companies WHERE shrtName = '" + shrtName +"' AND isCustomer = 1;";
-		ResultSet resultSet = dbConn.RunQuery(chkExist);
+		ResultSet resultSet = dbConn.runQuery(chkExist);
 		if(resultSet.first()) {
 			if (true == (boolean)resultSet.getObject("isSupplier")) {     //该客户也是供应商
 				String updateStr = "UPDATE Companies SET isCustomer=0 WHERE shrtName = '" + shrtName +"';";
-				if (dbConn.RunUpdate(updateStr) == 1) {
-					System.out.println("删除客户身份，保留其供应商身份！");
+				if (dbConn.runUpdate(updateStr) == 1) {
+					jsonRs.put("isSuccess", "true");
+	    		        jsonRs.put("msg", "删除客户身份，保留其供应商身份！");
 					return Action.SUCCESS;
 				} else {
-					System.out.println("删除客户身份失败！");
-					return Action.ERROR;
+					jsonRs.put("isSuccess", "false");
+    		        		jsonRs.put("msg", "删除客户身份失败！");
+					return Action.SUCCESS;
 				}
 			} else {
 			
 				String delStr = "DELETE FROM Companies WHERE shrtName = '" + shrtName +"';";
-				int rs = dbConn.RunUpdate(delStr);
+				int rs = dbConn.runUpdate(delStr);
 				if (rs == 1) {
-					System.out.println("删除客户成功！");
+					jsonRs.put("isSuccess", "true");
+	    		        jsonRs.put("msg", "成功删除客户！");
 					return Action.SUCCESS;
 				} else {
-					System.out.println("删除客户失败！");
-					return Action.ERROR;
+					jsonRs.put("isSuccess", "false");
+		    		    jsonRs.put("msg", "后台删除客户失败！");
+					return Action.SUCCESS;
 				}
 			}
 		} else {
-			System.out.println("客户不存在！");
-			return Action.ERROR;
+			jsonRs.put("isSuccess", "false");
+		    jsonRs.put("msg", "客户不存在！");
+		    return Action.SUCCESS;
 		}
 	}
 
 	public String update() throws Exception {
 		
-		String shrtName = ServletActionContext.getRequest().getParameter("shrtName");
-		String compTel = ServletActionContext.getRequest().getParameter("compName");
+		data.clear();
+		jsonRs.clear();
+		
+		String strSno = ServletActionContext.getRequest().getParameter("compSno");
+		int compSno = Integer.valueOf(strSno);
+		String compTel = ServletActionContext.getRequest().getParameter("compTel");
 		String compAddr = ServletActionContext.getRequest().getParameter("compAddr");
 		String cnntName = ServletActionContext.getRequest().getParameter("cnntName");
 		String cnntPhone = ServletActionContext.getRequest().getParameter("cnntPhone");
@@ -218,38 +229,48 @@ public class CustomerAction extends ActionSupport{
 		String specialist = ServletActionContext.getRequest().getParameter("specialist");
 		String cmt = ServletActionContext.getRequest().getParameter("cmt");
 		
-		String chkExist = "SELECT * FROM Companies WHERE shrtName = '" + shrtName +"' AND isCustomer = 1;";
-		if(dbConn.RunQuery(chkExist).first()) {
+		String chkExist = "SELECT * FROM Companies WHERE  compSno = " + compSno +" AND isCustomer = 1;";
+		
+		if(dbConn.runQuery(chkExist).first()) {
 			String setStr = "compTel='" + compTel + "', compAddr='" + compAddr + "', cnntName='" 
 					+ cnntName + "', cnntPhone='" + cnntPhone + "', position='" + position + "', specialist='"
-					+ specialist + "', cmt='" + cmt;
-			String updateStr = "UPDATE Companies SET " + setStr + " WHERE shrtName = '" + shrtName +"';";
-			dbConn.RunUpdate(updateStr);
+					+ specialist + "', cmt='" + cmt + "'";
+			String updateStr = "UPDATE Companies SET " + setStr + " WHERE compSno = " + compSno +";";
+			
+			if (dbConn.runUpdate(updateStr) == 1) {
+				System.out.println("客户资料更新成功!");
+				jsonRs.put("isSuccess", "true");
+				jsonRs.put("msg", "客户资料更新成功！");
+			} else {
+				System.out.println("客户资料更新失败！");
+				jsonRs.put("isSuccess", "false");
+				jsonRs.put("msg", "客户资料更新失败！");
+			}
 			return Action.SUCCESS;
 		} else {
-			System.out.println("客户不存在！");
-			return Action.ERROR;
+			jsonRs.put("isSuccess", "false");
+			jsonRs.put("msg", "客户资料不存在！");
+			return Action.SUCCESS;
 		}
 	}
 
 	public String search(String condition) throws Exception {
 
+		data.clear();
+		jsonRs.clear();
+		
 		if (condition.length() > 0) {
 			condition = " WHERE isCustomer = 1 AND " + condition;
 		} else {
 			condition = " WHERE isCustomer = 1";
 		}
-		String qStr = "SELECT compSno, compName, shrtName, compTel, compAddr, cnntName, cnntPhone, position, specialist, cmt FROM Companies" + condition + ";";
-		jsonStr= dbConn.GetJsonResult(qStr);
-		System.out.println(jsonStr);
-		try {
-//			ServletActionContext.getResponse().setCharacterEncoding("utf-8");
-//			ServletActionContext.getResponse().getWriter().println(rsJsonStr);
-			;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return Action.NONE;
+		String qStr = "SELECT * FROM Companies" + condition + ";";
+		data= dbConn.getListResult(qStr);
+		System.out.println(data.toString());
+		jsonRs.put("data", data);
+		jsonRs.put("isSuccess", "true");
+		jsonRs.put("msg", "后台搜索完成！");
+		return Action.SUCCESS;
 	}
 	
 	public String search() throws Exception {
@@ -267,8 +288,6 @@ public class CustomerAction extends ActionSupport{
 					qtype + " like '%" + qword + "%' or " +
 					qtype + " like '" + qword + "%'";
 		}
-		
-		System.out.println("Condition: " + condition);
 		
 		return search(condition);
 	}
