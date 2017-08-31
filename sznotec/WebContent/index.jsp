@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+    <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <!-- Meta, title, CSS, favicons, etc. -->
     <meta charset="utf-8">
@@ -42,109 +42,152 @@
     <script src="css/vendors/jquery/dist/jquery.min.js"></script>
     
     <script type="text/javascript">
-      $(document).ready(function() {
-        $('#datatable-fixed-header').dataTable( {
-            language: {
-                "processing": "处理中...",
-                "lengthMenu": "显示 _MENU_ 项结果",
-                "zeroRecords": "没有匹配结果",
-                "info": "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 项",
-                "infoEmpty": "显示第 0 至 0 项结果，共 0 项",
-                "infoFiltered": "(由 _MAX_ 项结果过滤)",
-                "infoPostFix": "",
-                "search": "搜索:",
-                "url": "",
-                "emptyTable": "表中数据为空",
-                "loadingRecords": "载入中...",
-                "infoThousands": ",",
-                "paginate": {
-                    "first": "首页",
-                    "previous": "上页",
-                    "next": "下页",
-                    "last": "末页"
-                },
-                "aria": {
-                    "sortAscending": ": 以升序排列此列",
-                    "sortDescending": ": 以降序排列此列"
-                }
-            },
-          /* language:{
-              "decimal":        "",
-              "emptyTable":     "表中数据为空",
-              "info":           "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 记录",
-              "infoEmpty":      "显示第 0 至 0 项结果，共 0 记录",
-              "infoFiltered":   "(从 _MAX_ 项记录中过滤)",
-              "infoPostFix":    "",
-              "thousands":      ",",
-              "lengthMenu":     "显示 _MENU_ 项记录",
-              "loadingRecords": "数据加载中...",
-              "processing":     "后台处理中...",
-              "search":         "查找:",
-              "zeroRecords":    "无匹配记录",
-              "paginate": {
-                  "first":      "首页",
-                  "last":       "尾页",
-                  "next":       "下一页",
-                  "previous":   "上一页"
-              },
-              "aria": {
-                  "sortAscending":  ": 以升序排列此列",
-                  "sortDescending": ": 以降序排列此列"
-              }
-          }， */
-          retrieve: "true",
-          autoWidth:"true",
-          ajax:{
-            "url":"getJson",
-/*          "dataSrc":"data", */
-            "dataSrc": function(json) {
-  /*             alert(JSON.stringify(json)); */
-              return json.data;
-            }
-          },
-          columns: [
-            { "className":"column-title", "title":"序号", "data": "compSno"},
-            { "title":"客户编码", "data": "shrtName"},
-            { "title":"名称", "data": "compName"},
-            { "title":"电话", "data": "compTel"},
-            { "title":"地址", "data": "compAddr"},
-            { "title":"联系人", "data": "cnntName"},
-            { "title":"联系电话", "data": "cnntPhone"},
-            { "title":"职位", "data": "position"},
-            { "title":"客户专员", "data": "specialist"},
-            { "title":"备注", "data": "cmt"},
-            { "title":"操作","data": ""}
-          ] ,
-          columnDefs: [
-            {"targets": [10], /*"render": function(data, type, full) {
-                 return '<a href="#myModal" role="button" class="btn btn-default" data-toggle="modal"><i class="fa fa-pencil"></i>编辑</a>'; 
-                return '<button type="button" id="editrow" class="btn btn-default" href="#"><i class="fa fa-pencil"></i>编辑</a>';
-                return '<a href="#" class="btn btn-default" onclick="editCustomer(\'' + row.id + '\')"><i class="fa fa-pencil"></i>编辑</a>';
-              }*/
-              "defaultContent": '<button type="button" id="editB" class="btn btn-default" href="#"><i class="fa fa-pencil"></i>编辑</a>'
-            }
-          ]
+        var cusTable = null;
+        var url = null;
+        
+        $(function() {
+            var cusTable = initializeTable();
+            
+            $('#customersTable').on( 'dblclick', 'tr', function () {
+                var id = cusTable.row(this).data();
+                alert( '被点击行的id是 '+ id.compAddr );
+            });
+            
+            $(document).on('click', 'button#addBtn', function() {
+                url = "addCustomer";
+                $("#addForm")[0].reset();
+                $("input[name*=compName]").attr("disabled",false);
+                $("input[name*=shrtName]").attr("disabled",false);
+                $("#myModal").modal("show");//弹出框show
+            });
+            
+            $('#customersTable tbody').on( 'click', 'button#editB', function () {
+                url = "updateCustomer";
+                
+                var data = cusTable.row($(this)).data();
+
+/*                 alert(JSON.stringify(data));*/
+
+                $("input[name=compSno]").val(data.compSno);
+                $("input[name=compName]").val(data.compName).attr("disabled",true);
+                $("input[name=shrtName]").val(data.shrtName).attr("disabled",true);
+                $("input[name=compAddr]").val(data.compAddr);
+                $("input[name=compTel]").val(data.compTel);
+                $("input[name=cnntName]").val(data.cnntName);
+                $("input[name=cnntPhone]").val(data.cnntPhone);
+                $("input[name=position]").val(data.position);
+                $("input[name=specialist]").val(data.specialist);
+                $("textarea[name=cmt]").val(data.cmt);
+                
+                $("#myModal").modal("show");//弹出框show
+                /* initializeTable(); */
+            });
         });
         
-        $('#datatable-fixed-header tbody').on( 'click', 'button#editB', function () {
-            var table = $('#datatable-fixed-header').DataTable();
-            var data = table.row( $(this).parents('tr') ).data();
-            alert("AAA");
-            /* var fields = $("#add-form").serializeArray();
-            jQuery.each( fields, function(i, field){
-                //jquery根据name属性查找
-                $(":input[name='"+field.name+"']").val(data[i]);
+         $(document).on('click', 'button#submit', function() {
+            alert(url);
+            $.ajax({
+                "url": url,
+                "data": {
+                    compSno: $("input[name=compSno]").val(),
+                    compName: $("input[name=compName]").val(),
+                    shrtName: $("input[name=shrtName]").val(),
+                    compAddr: $("input[name=compAddr]").val(),
+                    compTel: $("input[name=compTel]").val(),
+                    cnntName: $("input[name=cnntName]").val(),
+                    cnntPhone: $("input[name=cnntPhone]").val(),
+                    position: $("input[name=position]").val(),
+                    specialist: $("input[name=specialist]").val(),
+                    cmt: $("textarea[name=cmt]").val(),
+                },
+                complete: function(json) {
+                    if (json.isSuccess="true") {
+                        //如果后台删除成功，则刷新表格，并提示用户删除成功
+
+                        //保留分页信息
+                        alert(json.msg);
+                        $("#message").text(json.msg);
+                        $("#msgModal").modal("show");//弹出框show
+                        setTimeout(function(){$("#msgModal").modal("hide");},1000);
+                        cusTable.ajax.reload();
+                    } else {
+                        alert(json.msg);
+                        $("#message").text(json.msg);
+                        $("#msgModal").modal("show");//弹出框show
+                        setTimeout(function(){$("#msgModal").modal("hide");},1000);
+                    }
+                }/* ,
+                error: function(json,status,errorMsg) {
+                    alert("Status: " + status + " Msg: " + errorMsg);
+                } */
             });
-            $(":input[name='mark']").val("edit");
-            $("#modal-form").modal("show");//弹出框show */
-            
+            url = null;
         });
-      });
-      
-      function editCustomer(name) {
-          alert(name);
-      }
-      
+        
+        function initializeTable() {
+            var table = $('#customersTable').DataTable({
+                retrieve: "true",
+                 scroll:"no",
+                autoWidth:"false",
+                ajax:{
+                    "url":"getJson",
+                     "dataSrc": function(json) {
+/*                          alert(JSON.stringify(json.data)); */
+                         return json.data;
+                    }/* , 
+                    "success": function(json) {
+                        alert(JSON.stringify(json.data));
+                    } */
+                },
+                columns: [
+                    { "className":"column-title", "title":"序号", "data": "compSno"},
+                    { "title":"客户编码", "data": "shrtName"},
+                    { "title":"名称", "data": "compName"},
+                    { "title":"电话", "data": "compTel"},
+                    { "title":"地址", "data": "compAddr"},
+                    { "title":"联系人", "data": "cnntName"},
+                    { "title":"联系电话", "data": "cnntPhone"},
+                    { "title":"职位", "data": "position"},
+                    { "title":"客户专员", "data": "specialist"},
+                    { "title":"备注", "data": "cmt"},
+                    { "title":"操作","data": ""}
+                ],
+                columnDefs: [
+                    {"targets": [10], /*"render": function(data, type, full) {
+                     return '<a href="#myModal" role="button" class="btn btn-default" data-toggle="modal"><i class="fa fa-pencil"></i>编辑</a>'; 
+                     return '<button type="button" id="editrow" class="btn btn-default" href="#"><i class="fa fa-pencil"></i>编辑</a>';
+                     return '<a href="#" class="btn btn-default" onclick="editCustomer(\'' + row.id + '\')"><i class="fa fa-pencil"></i>编辑</a>';
+                     }*/
+                    "defaultContent": '<button type="button" id="editB" class="btn btn-default" href="#"><i class="fa fa-pencil"></i>编辑</a>'
+                    }
+                ],
+                language:{
+                    "emptyTable":     "表中数据为空",
+                    "info":           "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 记录",
+                    "infoEmpty":      "显示第 0 至 0 项结果，共 0 记录",
+                    "infoFiltered":   "(从 _MAX_ 项记录中过滤)",
+                    "infoPostFix":    "",
+                    "infoThousands":      ",",
+                    "lengthMenu":     "显示 _MENU_ 项记录",
+                    "loadingRecords": "数据加载中...",
+                    "processing":     "后台处理中...",
+                    "search":         "查找:",
+                    "zeroRecords":    "无匹配记录",
+                    "paginate": {
+                        "first":      "首页",
+                        "last":       "尾页",
+                        "next":       "下一页",
+                        "previous":   "上一页"
+                    },
+                    "aria": {
+                        "sortAscending":  ": 以升序排列此列",
+                        "sortDescending": ": 以降序排列此列"
+                    }
+                }
+            });
+            return table;
+        }
+
       function del(id, name) {
           $.ajax({
               url: "deleteCustomer",
@@ -163,7 +206,7 @@
                       alert(name + data.msg);
                   }
               }
-          })
+          });
       }
       
     </script>
@@ -391,15 +434,18 @@
                   <div class="title_right">
                     <div class="col-md-4 col-sm-4 col-xs-12 form-group pull-middle">
                       <div class="input-group col-md-4 col-sm-4 col-xs-4 pull-left">
-                        <a href="#myModal" role="button" class="btn btn-default" data-toggle="modal"><i class="fa fa-plus"></i>新增客户</a>
+                        <button id="addBtn" class="btn btn-default"><i class="fa fa-plus"></i>新增客户</a>
                       </div>
                     </div>
                   </div>
                   <div class="clearfix"></div>
                 </div>
-                <div class="x_content">
+ <!--                <div class="x_content"> -->
+                <div scroll="no">
+                    <div scroll="no">
 <!--                   <table id="datatable-fixed-header" class="table table-striped table-bordered table-responsive nowrap"></table> -->
-                  <table id="datatable-fixed-header" class="table table-striped table-bordered dt-responsive nowrap dataTable no-footer dtr-inline collapsed"></table>
+                        <table id="customersTable" class="table table-striped table-bordered dt-responsive nowrap dataTable no-footer dtr-inline collapsed" style="width:100%"></table>
+                    </div>
                 </div>
                 <div class="clearfix"></div>
               </div>
@@ -421,9 +467,9 @@
   </div>
   
   <!-- 模态框（Modal） -->
-  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
                     &times;
@@ -433,7 +479,13 @@
                 </h4>
             </div>
             <div class="modal-body">
-              <form name="addForm" id="addForm" class="form-horizontal form-label-left" action="addCustomer" method="POST">
+              <form name="addForm" id="addForm" class="form-horizontal form-label-left">
+                <div class="item form-group" style="display:block">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="compSno">序号</label>
+                  <div class="col-md-6 col-sm-6 col-xs-12">
+                    <input id="compSno"  name="compSno" type="text" class="form-control col-md-7 col-xs-12">
+                  </div>
+                </div>
                 <div class="item form-group">
                   <label class="control-label col-md-3 col-sm-3 col-xs-12" for="compName">客户名称 <span class="required">*</span></label>
                   <div class="col-md-6 col-sm-6 col-xs-12">
@@ -491,7 +543,7 @@
                  <div class="ln_solid"></div>
                  <div class="form-group">
                    <div class="col-md-12 col-md-offset-5">
-                     <button id="submit" type="submit" class="btn btn-success">提交</button>
+                     <button id="submit" class="btn btn-success" onclick="submit()">提交</button>
                      <button id="cancel" type="reset" class="btn btn-primary" data-dismiss="modal">取消</button>
                    </div>
                  </div>
@@ -499,7 +551,15 @@
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal -->
-</div>
+    </div>
+
+    <div class="modal fade" id="msgModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            <p id="message"></p>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
 
   <!-- jQuery -->
   <script src="css/vendors/jquery/dist/jquery.min.js"></script>

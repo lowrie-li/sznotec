@@ -24,9 +24,17 @@ public class CustomerAction extends ActionSupport{
 
 	private Map<String, Object> jsonRs=new HashMap<String, Object>();
 	private List<Map<String, String>> data = new ArrayList<Map<String, String>>();
-    
-    private String qtype;
-    private String qword;
+	
+	private String compName;
+	private String compSno;
+	private String shrtName;
+	private String compAddr;
+	private String compTel;
+	private String cnntName;
+	private String cnntPhone;
+	private String position;
+	private String specialist;
+	private String cmt;
     
     public void setJsonRs(Map<String, Object> rs) {
     		jsonRs = rs;
@@ -36,7 +44,87 @@ public class CustomerAction extends ActionSupport{
     		return this.jsonRs;
     }
  
-	
+    public void setCompSno(String sno) {
+    		this.compSno = sno;
+    }
+    
+    public String getCompSno() {
+    		return this.compSno;
+    }
+    
+    public void setCompName(String name) {
+    		this.compName = name;
+    }
+    
+    public String getCompName() {
+    		return this.compName;
+    }
+    
+    public void setShrtName(String name) {
+    		this.shrtName = name.toUpperCase();
+    }
+    
+    public String getShrtName() {
+    		return this.shrtName;
+    }
+    
+    public void setCompTel(String tel) {
+    		this.compTel = tel;
+    }
+    
+    public String getCompTel() {
+    		return this.compTel;
+    }
+    
+    public void setCompAddr(String addr) {
+    		this.compAddr = addr;
+    }
+    
+    public String getCompAddr() {
+    		return this.compAddr;
+    }
+    
+    public void setCnntName(String name) {
+    		this.cnntName = name;
+    }
+    
+    public String getCnntName() {
+    		return this.cnntName;
+    }
+    
+    public void setCnntPhone(String phone) {
+    		this.cnntPhone = phone;
+    }
+    
+    public String getCnntPhone() {
+    		return this.cnntPhone;
+    }
+    
+    public void setPosition(String pz) {
+    		this.position = pz;
+    }
+    
+    public String getPosition() {
+    		return this.position;
+    }
+    
+    public void setSpecialist(String name) {
+    		this.specialist = name;
+    }
+    
+    public String getSpecialist() {
+    		return this.specialist;
+    }
+    
+    public void setCmt(String cmt) {
+    		this.cmt = cmt;
+    }
+    
+    public String getCmt() {
+    		return this.cmt;
+    }
+
+    /*
     public String getJson() throws Exception {
     		String str1 = ServletActionContext.getRequest().getParameter("parm1");
     		String str2 = ServletActionContext.getRequest().getParameter("parm2");
@@ -114,22 +202,23 @@ public class CustomerAction extends ActionSupport{
     		jsonRs.put("msg", "fetch data error");
     		return Action.SUCCESS;
     }
+    */
     
 	public String add() throws Exception {
 
 		data.clear();
 		jsonRs.clear();
-		
+/*		
 		String compName = ServletActionContext.getRequest().getParameter("compName");
 		String shrtName = ServletActionContext.getRequest().getParameter("shrtName");
-		String compTel = ServletActionContext.getRequest().getParameter("compName");
+		String compTel = ServletActionContext.getRequest().getParameter("compTel");
 		String compAddr = ServletActionContext.getRequest().getParameter("compAddr");
 		String cnntName = ServletActionContext.getRequest().getParameter("cnntName");
 		String cnntPhone = ServletActionContext.getRequest().getParameter("cnntPhone");
 		String position = ServletActionContext.getRequest().getParameter("position");
 		String specialist = ServletActionContext.getRequest().getParameter("specialist");
 		String cmt = ServletActionContext.getRequest().getParameter("cmt");
-
+*/
 		String chkExist = "SELECT * FROM Companies WHERE compName = '"
 						 + compName + "' OR shrtName = '" + shrtName +"';";
 		ResultSet resultSet = dbConn.runQuery(chkExist);
@@ -218,7 +307,8 @@ public class CustomerAction extends ActionSupport{
 		
 		data.clear();
 		jsonRs.clear();
-		
+
+		/*
 		String strSno = ServletActionContext.getRequest().getParameter("compSno");
 		int compSno = Integer.valueOf(strSno);
 		String compTel = ServletActionContext.getRequest().getParameter("compTel");
@@ -228,6 +318,7 @@ public class CustomerAction extends ActionSupport{
 		String position = ServletActionContext.getRequest().getParameter("position");
 		String specialist = ServletActionContext.getRequest().getParameter("specialist");
 		String cmt = ServletActionContext.getRequest().getParameter("cmt");
+		*/
 		
 		String chkExist = "SELECT * FROM Companies WHERE  compSno = " + compSno +" AND isCustomer = 1;";
 		
@@ -277,17 +368,17 @@ public class CustomerAction extends ActionSupport{
 
 		String condition = "";
 		
-		qtype = ServletActionContext.getRequest().getParameter("qtype");
-		qword = ServletActionContext.getRequest().getParameter("qword");
-		
-		qtype = "shrtName";
-
-		if (qtype != null && qword != null && qword.length() > 0) {
-			condition = qtype + " = '" + qword + "' or " + 
-					qtype + " like '%" + qword + "' or " +
-					qtype + " like '%" + qword + "%' or " +
-					qtype + " like '" + qword + "%'";
-		}
+//		qtype = ServletActionContext.getRequest().getParameter("qtype");
+//		qword = ServletActionContext.getRequest().getParameter("qword");
+//		
+//		qtype = "shrtName";
+//
+//		if (qtype != null && qword != null && qword.length() > 0) {
+//			condition = qtype + " = '" + qword + "' or " + 
+//					qtype + " like '%" + qword + "' or " +
+//					qtype + " like '%" + qword + "%' or " +
+//					qtype + " like '" + qword + "%'";
+//		}
 		
 		return search(condition);
 	}
